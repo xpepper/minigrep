@@ -21,5 +21,5 @@ struct Config {
 fn parse_config(arguments: &[String]) -> Config {
     let query = arguments[1].clone();
     let file_path = arguments[2].clone();
-    Config { query: query, file_path }
+    Config { query, file_path }
 }
