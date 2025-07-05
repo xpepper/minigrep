@@ -23,6 +23,15 @@ fn runs_with_search_string_and_filename() {
     fs::remove_file("test_file.txt").ok();
 }
 
+#[test]
+fn fails_with_missing_parameters() {
+    let output = Command::new(env!("CARGO_BIN_EXE_minigrep"))
+        .output()
+        .expect("failed to execute binary");
+
+    assert!(!output.status.success());
+}
+
 fn assert_is_empty(string: &str) {
     assert!(string.is_empty(), "Expected empty, but got: {string}");
 }
