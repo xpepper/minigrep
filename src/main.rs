@@ -2,7 +2,7 @@ use std::{env, fs};
 
 fn main() {
     let args = env::args().collect::<Vec<_>>();
-    let config = parse_config(&args);
+    let config = Config::new(&args);
 
     println!("[LOG] Searching for {}", config.query);
     println!("[LOG] In file {}", config.file_path);
@@ -17,9 +17,10 @@ struct Config {
     query: String,
     file_path: String,
 }
-
-fn parse_config(arguments: &[String]) -> Config {
-    let query = arguments[1].clone();
-    let file_path = arguments[2].clone();
-    Config { query, file_path }
+impl Config {
+    fn new(arguments: &[String]) -> Self {
+        let query = arguments[1].clone();
+        let file_path = arguments[2].clone();
+        Config { query, file_path }
+    }
 }
