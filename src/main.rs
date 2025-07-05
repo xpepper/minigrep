@@ -10,7 +10,7 @@ fn main() {
     println!("{content}");
 }
 
-fn parse_config(arguments: &Vec<String>) -> (&String, &String) {
+fn parse_config(arguments: &[String]) -> (&str, &str) {
     let query = &arguments[1];
     let file_path = &arguments[2];
     (query, file_path)
