@@ -1,3 +1,4 @@
+use std::error::Error;
 use std::{env, fs, process};
 
 fn main() {
@@ -11,16 +12,16 @@ fn main() {
     println!("Searching for {}", config.query);
     println!("In file {}", config.file_path);
 
-    run(config);
+    run(&config).unwrap_or_else(|e| {
+        println!("Could not read file {}: {e}", config.file_path);
+        process::exit(1)
+    });
 }
 
-fn run(config: Config) {
-    let _content = fs::read_to_string(config.file_path.clone())
-        .inspect(|c| println!("File content: {c}"))
-        .unwrap_or_else(|e| {
-            println!("Could not read file {}: {e}", config.file_path);
-            process::exit(1)
-        });
+fn run(config: &Config) -> Result<(), Box<dyn Error>> {
+    let _content =
+        fs::read_to_string(&config.file_path).inspect(|c| println!("File content: {c}"))?;
+    Ok(())
 }
 
 struct Config {
