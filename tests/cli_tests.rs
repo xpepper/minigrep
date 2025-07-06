@@ -32,6 +32,17 @@ fn fails_with_missing_parameters() {
     assert!(!output.status.success());
 }
 
+#[test]
+fn fails_with_missing_file() {
+    let output = Command::new(env!("CARGO_BIN_EXE_minigrep"))
+        .arg("a_search_string")
+        .arg("non_existent_file.txt")
+        .output()
+        .expect("failed to execute binary");
+
+    assert!(!output.status.success());
+}
+
 fn assert_is_empty(string: &str) {
     assert!(string.is_empty(), "Expected empty, but got: {string}");
 }
