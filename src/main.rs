@@ -1,4 +1,4 @@
-use minigrep::{run, Config};
+use minigrep::Config;
 use std::{env, process};
 
 fn main() {
@@ -12,7 +12,7 @@ fn main() {
     println!("Searching for {}", config.query);
     println!("In file {}", config.file_path);
 
-    run(&config).unwrap_or_else(|e| {
+    minigrep::run(&config).unwrap_or_else(|e| {
         println!("Could not read file {}: {e}", config.file_path);
         process::exit(1)
     });
