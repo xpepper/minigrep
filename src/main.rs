@@ -11,10 +11,16 @@ fn main() {
     println!("Searching for {}", config.query);
     println!("In file {}", config.file_path);
 
-    let _content = fs::read_to_string(config.file_path.clone()).unwrap_or_else(|e| {
-        println!("Could not read file {}: {e}", config.file_path);
-        process::exit(1)
-    });
+    run(config);
+}
+
+fn run(config: Config) {
+    let _content = fs::read_to_string(config.file_path.clone())
+        .inspect(|c| println!("File content: {c}"))
+        .unwrap_or_else(|e| {
+            println!("Could not read file {}: {e}", config.file_path);
+            process::exit(1)
+        });
 }
 
 struct Config {
