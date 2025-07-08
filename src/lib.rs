@@ -2,9 +2,20 @@ use std::error::Error;
 use std::fs;
 
 pub fn run(config: &Config) -> Result<(), Box<dyn Error>> {
-    let _content =
-        fs::read_to_string(&config.file_path).inspect(|c| println!("File content: {c}"))?;
+    let content = fs::read_to_string(&config.file_path)?;
+
+    search(&config.query, &content)
+        .iter()
+        .for_each(|r| println!("Found {r}"));
+
     Ok(())
+}
+
+fn search<'a>(query: &str, content: &'a str) -> Vec<&'a str> {
+    content
+        .lines()
+        .filter(|l| l.contains(query))
+        .collect::<Vec<_>>()
 }
 
 pub struct Config {
@@ -25,6 +36,8 @@ impl Config {
 
 #[cfg(test)]
 mod tests {
+    use super::*;
+
     #[test]
     fn finds_a_matching_result() {
         let query = "duct";
@@ -36,12 +49,5 @@ Pick three.";
         let results = search(query, content);
 
         assert_eq!(vec!["safe, fast, productive."], results)
-    }
-
-    fn search<'a>(query: &str, content: &'a str) -> Vec<&'a str> {
-        content
-            .lines()
-            .filter(|l| l.contains(query))
-            .collect::<Vec<_>>()
     }
 }

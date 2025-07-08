@@ -6,7 +6,7 @@ fn runs_with_search_string_and_filename() {
     fs::write("test_file.txt", poem()).expect("Failed to write test file");
 
     let output = Command::new(env!("CARGO_BIN_EXE_minigrep"))
-        .arg("a_search_string")
+        .arg("somebody")
         .arg("test_file.txt")
         .output()
         .expect("failed to execute binary");
@@ -14,8 +14,7 @@ fn runs_with_search_string_and_filename() {
     assert_command_succeeded(&output);
 
     let stdout = String::from_utf8_lossy(&output.stdout);
-    assert_contains(&stdout, "Searching for a_search_string");
-    assert_contains(&stdout, "In file test_file.txt");
+    assert_contains(&stdout, "Found How dreary to be somebody!");
 
     let stderr = String::from_utf8_lossy(&output.stderr);
     assert_is_empty(&stderr);

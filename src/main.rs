@@ -9,9 +9,6 @@ fn main() {
         process::exit(1);
     });
 
-    println!("Searching for {}", config.query);
-    println!("In file {}", config.file_path);
-
     minigrep::run(&config).unwrap_or_else(|e| {
         println!("Could not read file {}: {e}", config.file_path);
         process::exit(1)
