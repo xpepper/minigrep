@@ -38,7 +38,7 @@ Pick three.";
         assert_eq!(vec!["safe, fast, productive."], results)
     }
 
-    fn search<'a>(query: &'a str, content: &'a str) -> Vec<&'a str> {
+    fn search<'a>(query: &str, content: &'a str) -> Vec<&'a str> {
         content
             .lines()
             .filter(|l| l.contains(query))
