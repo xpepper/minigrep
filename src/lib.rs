@@ -22,3 +22,26 @@ impl Config {
         Ok(Config { query, file_path })
     }
 }
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn finds_a_matching_result() {
+        let query = "duct";
+        let content = "\
+Rust:
+safe, fast, productive.
+Pick three.";
+
+        let results = search(query, content);
+
+        assert_eq!(vec!["safe, fast, productive."], results)
+    }
+
+    fn search<'a>(query: &'a str, content: &'a str) -> Vec<&'a str> {
+        content
+            .lines()
+            .filter(|l| l.contains(query))
+            .collect::<Vec<_>>()
+    }
+}
