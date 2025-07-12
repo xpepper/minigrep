@@ -4,18 +4,22 @@ use std::fs;
 pub fn run(config: &Config) -> Result<(), Box<dyn Error>> {
     let content = fs::read_to_string(&config.file_path)?;
 
-    search(&config.query, &content)
+    search(&config.query, &content, CaseMode::CaseInsensitive)
         .iter()
         .for_each(|r| println!("Found {r}"));
 
     Ok(())
 }
 
-fn search<'a>(query: &str, content: &'a str) -> Vec<&'a str> {
+fn search<'a>(query: &str, content: &'a str, _case_mode: CaseMode) -> Vec<&'a str> {
     content
         .lines()
         .filter(|l| l.contains(query))
         .collect::<Vec<_>>()
+}
+
+enum CaseMode {
+    CaseInsensitive,
 }
 
 pub struct Config {
@@ -47,8 +51,22 @@ safe, fast, productive.
 Pick three.
 Duct tape.";
 
-        let results = search(query, content);
+        let results = search(query, content, CaseMode::CaseInsensitive);
 
         assert_eq!(vec!["safe, fast, productive."], results)
+    }
+
+    #[test]
+    #[ignore]
+    fn finds_case_sensitive_matching_result() {
+        let query = "RuSt";
+        let content = "\
+Rust:
+safe, fast, productive.
+Pick three.
+Duct tape.";
+        let results = search(query, content, CaseMode::CaseInsensitive);
+
+        assert_eq!(vec!["Rust:"], results);
     }
 }
