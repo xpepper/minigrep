@@ -1,11 +1,10 @@
 use std::error::Error;
 use std::fs;
-use CaseMode::CaseInsensitive;
 
 pub fn run(config: &Config) -> Result<(), Box<dyn Error>> {
     let content = fs::read_to_string(&config.file_path)?;
 
-    search(&config.query, &content, CaseInsensitive)
+    search(&config.query, &content, CaseMode::CaseInsensitive)
         .iter()
         .for_each(|r| println!("Found {r}"));
 
@@ -16,13 +15,15 @@ fn search<'a>(query: &str, content: &'a str, case_mode: CaseMode) -> Vec<&'a str
     content
         .lines()
         .filter(|l| match case_mode {
-            CaseInsensitive => l.contains(query),
+            CaseMode::CaseInsensitive => l.contains(query),
+            CaseMode::CaseSensitive => l.to_lowercase().contains(query.to_lowercase().as_str()),
         })
         .collect::<Vec<_>>()
 }
 
 enum CaseMode {
     CaseInsensitive,
+    CaseSensitive,
 }
 
 pub struct Config {
@@ -54,13 +55,12 @@ safe, fast, productive.
 Pick three.
 Duct tape.";
 
-        let results = search(query, content, CaseInsensitive);
+        let results = search(query, content, CaseMode::CaseInsensitive);
 
         assert_eq!(vec!["safe, fast, productive."], results)
     }
 
     #[test]
-    #[ignore]
     fn finds_case_sensitive_matching_result() {
         let query = "RuSt";
         let content = "\
@@ -68,7 +68,7 @@ Rust:
 safe, fast, productive.
 Pick three.
 Duct tape.";
-        let results = search(query, content, CaseInsensitive);
+        let results = search(query, content, CaseMode::CaseSensitive);
 
         assert_eq!(vec!["Rust:"], results);
     }
