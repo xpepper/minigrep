@@ -1,22 +1,24 @@
+use crate::CaseMode::CaseSensitive;
 use std::error::Error;
 use std::fs;
+use CaseMode::CaseInsensitive;
 
 pub fn run(config: &Config) -> Result<(), Box<dyn Error>> {
     let content = fs::read_to_string(&config.file_path)?;
 
-    search(&config.query, &content, CaseMode::CaseInsensitive)
+    search(&config.query, &content, &config.case_mode)
         .iter()
         .for_each(|r| println!("Found {r}"));
 
     Ok(())
 }
 
-fn search<'a>(query: &str, content: &'a str, case_mode: CaseMode) -> Vec<&'a str> {
+fn search<'a>(query: &str, content: &'a str, case_mode: &CaseMode) -> Vec<&'a str> {
     content
         .lines()
         .filter(|l| match case_mode {
-            CaseMode::CaseInsensitive => l.contains(query),
-            CaseMode::CaseSensitive => l.to_lowercase().contains(query.to_lowercase().as_str()),
+            CaseSensitive => l.contains(query),
+            CaseInsensitive => l.to_lowercase().contains(query.to_lowercase().as_str()),
         })
         .collect::<Vec<_>>()
 }
@@ -29,6 +31,7 @@ enum CaseMode {
 pub struct Config {
     pub query: String,
     pub file_path: String,
+    pub(crate) case_mode: CaseMode,
 }
 impl Config {
     pub fn build(arguments: &[String]) -> Result<Self, &'static str> {
@@ -38,7 +41,11 @@ impl Config {
 
         let query = arguments[1].clone();
         let file_path = arguments[2].clone();
-        Ok(Config { query, file_path })
+        Ok(Config {
+            query,
+            file_path,
+            case_mode: CaseSensitive,
+        })
     }
 }
 
@@ -55,7 +62,7 @@ safe, fast, productive.
 Pick three.
 Duct tape.";
 
-        let results = search(query, content, CaseMode::CaseInsensitive);
+        let results = search(query, content, &CaseSensitive);
 
         assert_eq!(vec!["safe, fast, productive."], results)
     }
@@ -68,7 +75,7 @@ Rust:
 safe, fast, productive.
 Pick three.
 Duct tape.";
-        let results = search(query, content, CaseMode::CaseSensitive);
+        let results = search(query, content, &CaseInsensitive);
 
         assert_eq!(vec!["Rust:"], results);
     }
