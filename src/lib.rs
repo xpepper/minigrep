@@ -1,20 +1,23 @@
 use std::error::Error;
 use std::fs;
+use CaseMode::CaseInsensitive;
 
 pub fn run(config: &Config) -> Result<(), Box<dyn Error>> {
     let content = fs::read_to_string(&config.file_path)?;
 
-    search(&config.query, &content, CaseMode::CaseInsensitive)
+    search(&config.query, &content, CaseInsensitive)
         .iter()
         .for_each(|r| println!("Found {r}"));
 
     Ok(())
 }
 
-fn search<'a>(query: &str, content: &'a str, _case_mode: CaseMode) -> Vec<&'a str> {
+fn search<'a>(query: &str, content: &'a str, case_mode: CaseMode) -> Vec<&'a str> {
     content
         .lines()
-        .filter(|l| l.contains(query))
+        .filter(|l| match case_mode {
+            CaseInsensitive => l.contains(query),
+        })
         .collect::<Vec<_>>()
 }
 
@@ -51,7 +54,7 @@ safe, fast, productive.
 Pick three.
 Duct tape.";
 
-        let results = search(query, content, CaseMode::CaseInsensitive);
+        let results = search(query, content, CaseInsensitive);
 
         assert_eq!(vec!["safe, fast, productive."], results)
     }
@@ -65,7 +68,7 @@ Rust:
 safe, fast, productive.
 Pick three.
 Duct tape.";
-        let results = search(query, content, CaseMode::CaseInsensitive);
+        let results = search(query, content, CaseInsensitive);
 
         assert_eq!(vec!["Rust:"], results);
     }
