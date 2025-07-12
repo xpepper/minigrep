@@ -18,7 +18,7 @@ fn search<'a>(query: &str, content: &'a str, case_mode: &CaseMode) -> Vec<&'a st
         .lines()
         .filter(|l| match case_mode {
             CaseSensitive => l.contains(query),
-            CaseInsensitive => l.to_lowercase().contains(query.to_lowercase().as_str()),
+            CaseInsensitive => l.to_lowercase().contains(&query.to_lowercase()),
         })
         .collect::<Vec<_>>()
 }
