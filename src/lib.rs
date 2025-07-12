@@ -1,6 +1,6 @@
 use crate::CaseMode::CaseSensitive;
 use std::error::Error;
-use std::fs;
+use std::{env, fs};
 use CaseMode::CaseInsensitive;
 
 pub fn run(config: &Config) -> Result<(), Box<dyn Error>> {
@@ -41,10 +41,19 @@ impl Config {
 
         let query = arguments[1].clone();
         let file_path = arguments[2].clone();
+        let case_mode = env::var("CASE_MODE").unwrap_or("sensitive".to_string());
+        let case_mode = if case_mode == "sensitive" {
+            CaseSensitive
+        } else if case_mode == "insensitive" {
+            CaseInsensitive
+        } else {
+            return Err("Invalid case mode");
+        };
+
         Ok(Config {
             query,
             file_path,
-            case_mode: CaseSensitive,
+            case_mode,
         })
     }
 }
