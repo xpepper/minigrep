@@ -39,12 +39,13 @@ mod tests {
     use super::*;
 
     #[test]
-    fn finds_a_matching_result() {
+    fn finds_a_case_sensitive_matching_result() {
         let query = "duct";
         let content = "\
 Rust:
 safe, fast, productive.
-Pick three.";
+Pick three.
+Duct tape.";
 
         let results = search(query, content);
 
