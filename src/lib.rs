@@ -41,17 +41,22 @@ impl Config {
 
         let query = arguments[1].clone();
         let file_path = arguments[2].clone();
-        let case_mode = match env::var("CASE_MODE").as_deref().unwrap_or("sensitive") {
-            "sensitive" => CaseSensitive,
-            "insensitive" => CaseInsensitive,
-            _ => return Err("Invalid case mode"),
-        };
+        let case_mode = Self::case_mode()?;
 
         Ok(Config {
             query,
             file_path,
             case_mode,
         })
+    }
+
+    fn case_mode() -> Result<CaseMode, &'static str> {
+        let case_mode = match env::var("CASE_MODE").as_deref().unwrap_or("sensitive") {
+            "sensitive" => CaseSensitive,
+            "insensitive" => CaseInsensitive,
+            _ => return Err("Invalid case mode"),
+        };
+        Ok(case_mode)
     }
 }
 
