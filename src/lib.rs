@@ -34,13 +34,17 @@ pub struct Config {
     pub(crate) case_mode: CaseMode,
 }
 impl Config {
-    pub fn build(arguments: &[String]) -> Result<Self, &'static str> {
-        if arguments.len() < 3 {
-            return Err("Not enough arguments");
-        }
+    pub fn build(mut arguments: impl Iterator<Item = String>) -> Result<Self, &'static str> {
+        arguments.next();
 
-        let query = arguments[1].clone();
-        let file_path = arguments[2].clone();
+        let query = match arguments.next() {
+            None => return Err("query string not supplied"),
+            Some(query) => query,
+        };
+        let file_path = match arguments.next() {
+            None => return Err("file path not supplied"),
+            Some(file_path) => file_path,
+        };
         let case_mode = Self::case_mode()?;
 
         Ok(Config {
