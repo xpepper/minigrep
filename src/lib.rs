@@ -37,14 +37,8 @@ impl Config {
     pub fn build(mut arguments: impl Iterator<Item = String>) -> Result<Self, &'static str> {
         arguments.next();
 
-        let query = match arguments.next() {
-            None => return Err("query string not supplied"),
-            Some(query) => query,
-        };
-        let file_path = match arguments.next() {
-            None => return Err("file path not supplied"),
-            Some(file_path) => file_path,
-        };
+        let query = arguments.next().ok_or("query string not supplied")?;
+        let file_path = arguments.next().ok_or("file path not supplied")?;
         let case_mode = Self::case_mode()?;
 
         Ok(Config {
