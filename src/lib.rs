@@ -1,14 +1,14 @@
 use crate::CaseMode::CaseSensitive;
+use CaseMode::CaseInsensitive;
 use std::error::Error;
 use std::{env, fs};
-use CaseMode::CaseInsensitive;
 
 pub fn run(config: &Config) -> Result<(), Box<dyn Error>> {
     let content = fs::read_to_string(&config.file_path)?;
 
     search(&config.query, &content, &config.case_mode)
         .iter()
-        .for_each(|r| println!("Found {r}"));
+        .for_each(|matching_string| println!("Found {matching_string}"));
 
     Ok(())
 }
