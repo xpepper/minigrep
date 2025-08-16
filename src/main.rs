@@ -1,4 +1,4 @@
-use minigrep_tool::Config;
+use minigrep_tool_cli::Config;
 use std::{env, process};
 
 fn main() {
@@ -7,7 +7,7 @@ fn main() {
         process::exit(1);
     });
 
-    minigrep_tool::run(&config).unwrap_or_else(|e| {
+    minigrep_tool_cli::run(&config).unwrap_or_else(|e| {
         eprintln!("Could not read file {}: {e}", config.file_path);
         process::exit(1)
     });
